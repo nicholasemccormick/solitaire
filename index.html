@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Solitaire</title>
+<meta name="theme-color" content="#14583c">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Solitaire">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="bar top">
+  <div class="stat"><small>Moves</small><b id="moves">0</b></div>
+  <div class="stat"><small>Time</small><b id="time">0:00</b></div>
+  <div class="stat"><small>Wins</small><b id="wins">0</b></div>
+</header>
+
+<div id="board" aria-label="Solitaire board"></div>
+
+<footer class="bar bottom">
+  <button id="btn-new" type="button">New game</button>
+  <button id="btn-finish" type="button" class="accent" hidden>Finish</button>
+  <button id="btn-undo" type="button">Undo</button>
+</footer>
+
+<div id="sheet" class="overlay" hidden>
+  <div class="panel">
+    <h2>New game</h2>
+    <p>How many cards per draw?</p>
+    <button type="button" data-draw="1" class="big">Draw 1 <small>easier</small></button>
+    <button type="button" data-draw="3" class="big">Draw 3 <small>classic</small></button>
+    <button type="button" id="sheet-cancel" class="plain">Cancel</button>
+    <p class="hint" id="install-hint">To install: tap the Share button in Safari, then <b>Add to Home Screen</b>.</p>
+  </div>
+</div>
+
+<div id="win" class="overlay" hidden>
+  <div class="panel">
+    <div class="trophy">🏆</div>
+    <h2>You won!</h2>
+    <p id="win-text"></p>
+    <button type="button" id="win-new" class="big">Play again</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
