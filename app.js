@@ -2,6 +2,18 @@
   'use strict';
 
   var SUITS = ['♠︎', '♥︎', '♦︎', '♣︎']; // spade, heart, diamond, club
+  var SUIT_ART = [
+    '<path d="M50 5C40 25 7 41 7 62c0 12 9 21 21 21 8 0 15-4 19-11-1 10-5 18-13 23h32c-8-5-12-13-13-23 4 7 11 11 19 11 12 0 21-9 21-21C93 41 60 25 50 5z"/>',
+    '<path d="M50 90C20 64 6 47 6 30 6 16 17 7 29 7c9 0 17 5 21 14C54 12 62 7 71 7c12 0 23 9 23 23 0 17-14 34-44 60z"/>',
+    '<path d="M50 3c8 19 21 35 39 47-18 12-31 28-39 47-8-19-21-35-39-47C29 38 42 22 50 3z"/>',
+    '<circle cx="50" cy="27" r="20"/><circle cx="27" cy="57" r="20"/><circle cx="73" cy="57" r="20"/><circle cx="50" cy="50" r="12"/><path d="M47 58c0 18-4 30-13 37h32c-9-7-13-19-13-37z"/>'
+  ];
+  function suitSvg(s, cls) {
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 100 100'); svg.setAttribute('class', cls); svg.setAttribute('aria-hidden', 'true');
+    svg.innerHTML = SUIT_ART[s];
+    return svg;
+  }
   var RANKS = ['', 'A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
   var isRed = function (s) { return s === 1 || s === 2; };
   var $ = function (id) { return document.getElementById(id); };
@@ -183,8 +195,8 @@
     layout();
     var token = ++renderToken, boost = {};
     (movedIds || []).forEach(function (id) { boost[id] = true; });
-    function put(card, x, y, z) {
-      var el = els[card.id];
+    function put(card, x, y, z, under) {
+      var el = els[card.id]; el.classList.toggle('under', !!under);
       el.classList.toggle('up', card.up); el.classList.remove('drag');
       place(el, x, y, boost[card.id] ? z + 1000 : z); el._z = z;
     }
@@ -194,10 +206,10 @@
     for (i = 0; i < 7; i++) place(slots['t' + i], xc(i), L.y1, 0);
     slots.stock.textContent = G.waste.length ? '↻' : '';
 
-    for (j = 0; j < G.stock.length; j++) put(G.stock[j], xc(6), L.y0, j + 1);
+    for (j = 0; j < G.stock.length; j++) put(G.stock[j], xc(6), L.y0, j + 1, j < G.stock.length - 1);
     var n = G.waste.length, fan = G.draw === 3 ? 3 : 1;
-    for (j = 0; j < n; j++) { var k = n - 1 - j; put(G.waste[j], xc(5) - Math.min(k, fan - 1) * L.cw * 0.6, L.y0, j + 1); }
-    for (i = 0; i < 4; i++) for (j = 0; j < G.found[i].length; j++) put(G.found[i][j], xc(i), L.y0, j + 1);
+    for (j = 0; j < n; j++) { var k = n - 1 - j; put(G.waste[j], xc(5) - Math.min(k, fan - 1) * L.cw * 0.6, L.y0, j + 1, k > fan); }
+    for (i = 0; i < 4; i++) for (j = 0; j < G.found[i].length; j++) put(G.found[i][j], xc(i), L.y0, j + 1, j < G.found[i].length - 2);
     for (i = 0; i < 7; i++) {
       var col = G.tab[i], total = 0;
       for (j = 0; j < col.length - 1; j++) total += col[j].up ? L.ch * 0.3 : L.ch * 0.14;
@@ -221,10 +233,15 @@
     for (i = 0; i < 7; i++) slot('t' + i);
     for (var s = 0; s < 4; s++) for (var r = 1; r <= 13; r++) {
       var el = document.createElement('div'); el.className = 'card'; el.dataset.id = s * 13 + r - 1;
-      var face = document.createElement('div'); face.className = 'face' + (isRed(s) ? ' red' : '');
+      var face = document.createElement('div');
+      face.className = 'face ' + (isRed(s) ? 'red' : 'black') + (r > 10 ? ' court' : r === 1 ? ' ace' : '');
       var idx = document.createElement('div'); idx.className = 'idx';
-      [['rk', RANKS[r], idx], ['st', SUITS[s], idx], ['pip', SUITS[s], face]].forEach(function (p) { var sp = document.createElement('span'); sp.className = p[0]; sp.textContent = p[1]; p[2].appendChild(sp); });
-      face.insertBefore(idx, face.firstChild);
+      var rk = document.createElement('span'); rk.className = 'rk' + (r === 10 ? ' ten' : ''); rk.textContent = RANKS[r];
+      idx.appendChild(rk); idx.appendChild(suitSvg(s, 'st'));
+      var mid = document.createElement('div'); mid.className = 'mid';
+      if (r > 10) { var lt = document.createElement('span'); lt.className = 'letter'; lt.textContent = RANKS[r]; mid.appendChild(lt); }
+      mid.appendChild(suitSvg(s, 'pip'));
+      face.appendChild(idx); face.appendChild(mid);
       var back = document.createElement('div'); back.className = 'back';
       el.appendChild(face); el.appendChild(back); board.appendChild(el); els[s * 13 + r - 1] = el;
     }

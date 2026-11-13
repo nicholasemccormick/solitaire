@@ -19,20 +19,44 @@ body {
 
 #board { position: relative; flex: 1; min-height: 0; touch-action: none; overflow: hidden; }
 .slot, .card { position: absolute; left: 0; top: 0; width: var(--cw); height: var(--ch); border-radius: calc(var(--cw) * .1); }
-.slot { border: 2px solid rgba(255,255,255,.22); background: rgba(0,0,0,.1); display: flex; align-items: center; justify-content: center; font-size: calc(var(--cw) * .5); color: rgba(255,255,255,.28); }
+.slot { border: 1.5px solid rgba(255,255,255,.2); background: rgba(0,0,0,.12); font-weight: 600; display: flex; align-items: center; justify-content: center; font-size: calc(var(--cw) * .5); color: rgba(255,255,255,.28); }
 .card { transition: transform .22s cubic-bezier(.2,.8,.3,1); will-change: transform; }
 .card.drag, .notrans .card { transition: none; }
 .card.drag { filter: drop-shadow(0 8px 10px rgba(0,0,0,.4)); }
-.face, .back { position: absolute; inset: 0; border-radius: inherit; box-shadow: 0 1px 2px rgba(0,0,0,.45); }
-.face { background: #fbfaf6; color: #1b1b1b; border: 1px solid #c9c6bc; overflow: hidden; }
-.face.red { color: #c8242b; }
+.face, .back { position: absolute; inset: 0; border-radius: inherit; box-shadow: 0 0 0 .5px rgba(0,0,0,.35), 0 1px 1px rgba(0,0,0,.25), 0 3px 6px rgba(0,0,0,.22); }
+.face { background: linear-gradient(170deg, #ffffff 0%, #fbfaf7 55%, #f1eee6 100%); overflow: hidden; }
+.face.red { color: #cf2733; }
+.face.black { color: #1d2129; }
+.face svg { fill: currentColor; display: block; }
+.card.under .face, .card.under .back { box-shadow: none; }
 .card:not(.up) .face { display: none; }
 .card.up .back { display: none; }
-.back { border: 2px solid #fff; background: repeating-linear-gradient(45deg, #1d4f91 0 5px, #2a65b5 5px 10px); }
-.idx { position: absolute; left: calc(var(--cw) * .07); top: calc(var(--cw) * .02); display: flex; align-items: baseline; gap: calc(var(--cw) * .03); line-height: 1.15; white-space: nowrap; }
-.rk { font-size: calc(var(--cw) * .38); font-weight: 700; letter-spacing: -.06em; }
-.st { font-size: calc(var(--cw) * .32); }
-.pip { position: absolute; left: 0; right: 0; bottom: calc(var(--ch) * .06); text-align: center; font-size: calc(var(--cw) * .62); line-height: 1; }
+
+/* corner index: rank with the suit beside it, readable when cards overlap */
+.idx { position: absolute; left: calc(var(--cw) * .075); top: calc(var(--cw) * .045); display: flex; align-items: center; gap: calc(var(--cw) * .035); }
+.rk { font-family: "SF Pro Rounded", ui-rounded, -apple-system, "Helvetica Neue", Arial, sans-serif; font-size: calc(var(--cw) * .37); font-weight: 700; line-height: 1; letter-spacing: -.03em; }
+.rk.ten { letter-spacing: -.09em; margin-left: calc(var(--cw) * -.02); }
+.st { width: calc(var(--cw) * .27); height: calc(var(--cw) * .27); }
+
+/* centre artwork */
+.mid { position: absolute; left: calc(var(--cw) * .09); right: calc(var(--cw) * .09); top: calc(var(--cw) * .5); bottom: calc(var(--cw) * .1); display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: calc(var(--cw) * .07); }
+.pip { width: calc(var(--cw) * .56); height: calc(var(--cw) * .56); filter: drop-shadow(0 1px 0 rgba(0,0,0,.12)); }
+.ace .pip { width: calc(var(--cw) * .7); height: calc(var(--cw) * .7); }
+.court .mid { gap: calc(var(--cw) * .02); box-shadow: inset 0 0 0 1px currentColor, inset 0 0 0 calc(var(--cw) * .035) #fbfaf7, inset 0 0 0 calc(var(--cw) * .05) currentColor; }
+.court.red .mid { background: linear-gradient(180deg, #fdeeee, #f9dcdd); }
+.court.black .mid { background: linear-gradient(180deg, #eef0f4, #dfe3ea); }
+.letter { font-family: Georgia, "Times New Roman", serif; font-size: calc(var(--cw) * .52); font-weight: 700; line-height: .95; }
+.court .pip { width: calc(var(--cw) * .26); height: calc(var(--cw) * .26); filter: none; }
+
+/* card back: white margin around a patterned panel */
+.back { background: #fdfcf8; }
+.back::before { content: ""; position: absolute; inset: calc(var(--cw) * .07); border-radius: calc(var(--cw) * .055);
+  background:
+    radial-gradient(circle at 50% 50%, #f1cf7a 0 calc(var(--cw) * .07), #17346a calc(var(--cw) * .075) calc(var(--cw) * .12), transparent calc(var(--cw) * .125)),
+    repeating-linear-gradient(45deg, rgba(255,255,255,.16) 0 1.5px, transparent 1.5px calc(var(--cw) * .14)),
+    repeating-linear-gradient(-45deg, rgba(255,255,255,.16) 0 1.5px, transparent 1.5px calc(var(--cw) * .14)),
+    linear-gradient(165deg, #2f58a6 0%, #1c3a78 55%, #142b5c 100%);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.35); }
 .card.shake .face { animation: shake .3s; }
 @keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
 
